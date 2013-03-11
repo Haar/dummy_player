@@ -12,7 +12,7 @@ module MyHelper
       potential.first
     else
       words_for_state = possible_words_for_pattern(state)
-      most_common_letter(words_for_state)
+      most_common_letter(words_for_state, guesses)
     end
   end
 
@@ -21,9 +21,10 @@ module MyHelper
     self.possible_words.select{|w| w =~ reg}
   end
 
-  def self.most_common_letter(words)
+  def self.most_common_letter(words, guesses)
     bin = Hash.new{|k,v| k[v] = 0}
     letters = words.map{|w| w.split("")}.flatten
+    letters = letters - guesses
     letters.map{|l| bin[l] += 1}
     return bin.to_a.sort_by{ |k,v| v }.last[0]
   end
