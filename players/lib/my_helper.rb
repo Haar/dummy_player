@@ -11,8 +11,11 @@ module MyHelper
   end
 
   def self.possible_words_for_pattern(state, guesses)
-    reg = Regexp.new("^#{state.gsub('_', "[^#{guesses.join}]")}$")
-    p reg
+    if guesses.empty?
+      reg = Regexp.new("^#{state.gsub('_', ".")}$")
+    else
+      reg = Regexp.new("^#{state.gsub('_', "[^#{guesses.join}]")}$")
+    end
     self.possible_words.select{|w| w =~ reg}
   end
 
@@ -49,4 +52,4 @@ end
 #puts MyHelper.most_common_letter(["asdf", "qaswqa"], ["a", "q"])
 #puts MyHelper.most_common_letter(["abc", "bad", "dddddd", "ff", "c"])
 # 10.times { p MyHelper.answer("______", "abcdef".split('')) }
-# p MyHelper.answer("_______", ["e", "a"])
+# p MyHelper.answer("__________", [])
