@@ -2,7 +2,6 @@ module MyHelper
 
   ALPHABET = "abcdefghijklmnopqrstuvwxyz".split('')
   COMMON_FREQ = "etaoinshrdlcumwfgypbvkjxqz".split('')
-  #FIRST_LETTER_FREQ = "tashwiobmfcldpnegryuvjkqxz".split('')
 
   def self.answer(state, guesses)
     find_possible_words(state)
@@ -12,18 +11,22 @@ module MyHelper
 
   def self.possible_words_for_pattern(state, guesses)
     if guesses.empty?
-      reg = Regexp.new("^#{state.gsub('_', ".")}$")
+      reg = Regexp.new("^#{state.gsub('_', ".")}")
     else
-      reg = Regexp.new("^#{state.gsub('_', "[^#{guesses.join}]")}$")
+      reg = Regexp.new("^#{state.gsub('_', "[^#{guesses.join}]")}")
     end
     self.possible_words.select{|w| w =~ reg}
   end
 
   def self.most_common_letter(words, guesses)
-    bin = Hash.new{|k,v| k[v] = 0}
-    letters = words.map{|w| w.split("")}.flatten - guesses
-    letters.map{|l| bin[l] += 1}
-    return bin.to_a.sort_by{ |k,v| v }.last[0]
+    if words.empty?
+      (COMMON_FREQ - guesses).first
+    else
+      bin = Hash.new{|k,v| k[v] = 0}
+      letters = words.map{|w| w.split("")}.flatten - guesses
+      letters.map{|l| bin[l] += 1}
+      return bin.to_a.sort_by{ |k,v| v }.last[0]
+    end
   end
 
   def self.blank_state?(state)
@@ -40,7 +43,7 @@ module MyHelper
       words = []
       File.open("/usr/share/dict/words", "r") do |dictionary|
         while (word = dictionary.gets)
-          word = word.strip
+          word = word.strip.downcase
           words << word if word.length == length
         end
       end
@@ -52,4 +55,4 @@ end
 #puts MyHelper.most_common_letter(["asdf", "qaswqa"], ["a", "q"])
 #puts MyHelper.most_common_letter(["abc", "bad", "dddddd", "ff", "c"])
 # 10.times { p MyHelper.answer("______", "abcdef".split('')) }
-# p MyHelper.answer("__________", [])
+#MyHelper.answer("undoin_s", ["u", "n", "d", "o", "i", "e", "t", "a", "s", "h", "r", "g", "l", "c"])
