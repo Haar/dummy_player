@@ -2,7 +2,7 @@ module MyHelper
 
   ALPHABET = "abcdefghijklmnopqrstuvwxyz".split('')
   COMMON_FREQ = "etaoinshrdlcumwfgypbvkjxqz".split('')
-  FIRST_LETTER_FREQ = "tashwiobmfcldpnegryuvjkqxz".split('')
+  #FIRST_LETTER_FREQ = "tashwiobmfcldpnegryuvjkqxz".split('')
 
   def self.answer(state, guesses)
     find_possible_words(state)
@@ -23,8 +23,7 @@ module MyHelper
 
   def self.most_common_letter(words, guesses)
     bin = Hash.new{|k,v| k[v] = 0}
-    letters = words.map{|w| w.split("")}.flatten
-    letters = letters - guesses
+    letters = words.map{|w| w.split("")}.flatten - guesses
     letters.map{|l| bin[l] += 1}
     return bin.to_a.sort_by{ |k,v| v }.last[0]
   end
@@ -40,13 +39,13 @@ module MyHelper
   def self.find_possible_words(state)
     @possible_words ||= begin
       length = state.length
-      File.open("words", "r") do |dictionary|
+      File.open("/usr/share/dict/words", "r") do |dictionary|
         dictionary.gets.select { |word| word.strip.length == length }
       end
     end
   end
 end
 
-#puts MyHelper.most_common_letter(["asdf", "qaswqa"])
+#puts MyHelper.most_common_letter(["asdf", "qaswqa"], ["a", "q"])
 #puts MyHelper.most_common_letter(["abc", "bad", "dddddd", "ff", "c"])
 # 10.times { p MyHelper.answer("______", "abcdef".split('')) }
