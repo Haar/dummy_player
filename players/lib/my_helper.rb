@@ -6,18 +6,13 @@ module MyHelper
 
   def self.answer(state, guesses)
     find_possible_words(state)
-
-    if blank_state?(state)
-      potential = COMMON_FREQ - guesses
-      potential.first
-    else
-      words_for_state = possible_words_for_pattern(state)
-      most_common_letter(words_for_state, guesses)
-    end
+    words_for_state = possible_words_for_pattern(state, guesses)
+    most_common_letter(words_for_state, guesses)
   end
 
-  def self.possible_words_for_pattern(state)
-    reg = Rexexp.new("^#{state.gsub('_', '.')}$")
+  def self.possible_words_for_pattern(state, guesses)
+    reg = Regexp.new("^#{state.gsub('_', "[^#{guesses.join}]")}$")
+    p reg
     self.possible_words.select{|w| w =~ reg}
   end
 
@@ -39,9 +34,14 @@ module MyHelper
   def self.find_possible_words(state)
     @possible_words ||= begin
       length = state.length
+      words = []
       File.open("/usr/share/dict/words", "r") do |dictionary|
-        dictionary.gets.select { |word| word.strip.length == length }
+        while (word = dictionary.gets)
+          word = word.strip
+          words << word if word.length == length
+        end
       end
+      words
     end
   end
 end
@@ -49,3 +49,4 @@ end
 #puts MyHelper.most_common_letter(["asdf", "qaswqa"], ["a", "q"])
 #puts MyHelper.most_common_letter(["abc", "bad", "dddddd", "ff", "c"])
 # 10.times { p MyHelper.answer("______", "abcdef".split('')) }
+# p MyHelper.answer("_______", ["e", "a"])
